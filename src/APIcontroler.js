@@ -21,9 +21,7 @@ exports.getUser = async (credentials, onError) => {
             //alert(responseJSON);
             if (authResponse.ok && authResponse.status == 200) {
                 if (credentials.password != responseJSON.Password) {
-                    alert(responseJSON.Password);
-                    //onError("Sai tài khoản hoặc mật khẩu");
-                    onError(true);
+                    onError("Sai tài khoản hoặc mật khẩu");
                 }
                 else {
                     onError(true);

@@ -31,15 +31,16 @@ class SignUp extends Component {
       XeMV: {OT: 0, XM: 0, XD: 0, TONG: 0},
     };
 
-    this.setState({dateF: this.state.dateF.setHours(0, 0, 0), dateT: this.state.dateT.setHours(23, 59, 59)})
+    this.setState({dateF: this.state.dateF.setHours(0, 0, 0)})
   }
 
   componentDidMount()
   {
-   
+   this.login();
   }
 
   login = (e) => {
+    if(e != undefined)
     e.preventDefault();
     this.setState({ isloading: true });
     API.getData({ DateF: this.state.dateF, DateT: this.state.dateT }, (data) => {
