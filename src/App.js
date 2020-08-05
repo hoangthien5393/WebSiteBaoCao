@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-ro
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
 import DateTimePicker from 'react-datetime-picker';
 import { CircleLoading } from 'react-loadingg';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 var API = require("./APIcontroler");
 var numeral = require('numeral');
@@ -22,20 +24,31 @@ class SignUp extends Component {
       dateT: new Date(),
       DauKy: { OTT: 0, OTL: 0, XMT: 0, XML: 0, TONG: 0 },
       GiuaKy: { OTT: 0, OTL: 0, XMT: 0, XML: 0, TONG: 0 },
-      CuoiKy: { OTT: 0, OTL: 0, XMT: 0, XML: 0, TONG: 0 }
+      CuoiKy: { OTT: 0, OTL: 0, XMT: 0, XML: 0, TONG: 0 },
+      TrongBai: {OT: 0, XM: 0, XD: 0, TONG: 0},
+      XeVao: {OT: 0, XM: 0, XD: 0, TONG: 0},
+      XeRa: {OT: 0, XM: 0, XD: 0, TONG: 0},
+      XeMV: {OT: 0, XM: 0, XD: 0, TONG: 0},
     };
+
+    this.setState({dateF: this.state.dateF.setHours(0, 0, 0), dateT: this.state.dateT.setHours(23, 59, 59)})
+  }
+
+  componentDidMount()
+  {
+   
   }
 
   login = (e) => {
     e.preventDefault();
-    this.setState({isloading: true});
+    this.setState({ isloading: true });
     API.getData({ DateF: this.state.dateF, DateT: this.state.dateT }, (data) => {
       if (data == "error") {
         alert("Mất kết nối đến server")
-        this.setState({isloading: false});
+        this.setState({ isloading: false });
       }
       else {
-        this.setState({isloading: false});
+        this.setState({ isloading: false });
         this.setState(state => {
           const list = this.state.DauKy;
           list.OTT = data.OTTDK;
@@ -73,6 +86,54 @@ class SignUp extends Component {
             value: '',
           };
         });
+        //sl xe
+        this.setState(state => {
+          const list = this.state.TrongBai;
+          list.OT = data.OTXTB;
+          list.TONG = data.TONGXTB;
+          list.XM = data.XMXTB;
+          list.XD = data.XDXTB;
+          return {
+            list,
+            value: '',
+          };
+        });
+        //
+        this.setState(state => {
+          const list = this.state.XeVao;
+          list.OT = data.OTXDV;
+          list.TONG = data.TONGXDV;
+          list.XM = data.XMXDV;
+          list.XD = data.XDXDV;
+          return {
+            list,
+            value: '',
+          };
+        });
+        //
+        this.setState(state => {
+          const list = this.state.XeRa;
+          list.OT = data.OTXDR;
+          list.TONG = data.TONGXDR;
+          list.XM = data.XMXDR;
+          list.XD = data.XDXDR;
+          return {
+            list,
+            value: '',
+          };
+        });
+        //
+        this.setState(state => {
+          const list = this.state.XeMV;
+          list.OT = data.OTXMV;
+          list.TONG = data.TONGXMV;
+          list.XM = data.XMXMV;
+          list.XD = data.XDXMV;
+          return {
+            list,
+            value: '',
+          };
+        });
       }
     })
 
@@ -86,58 +147,121 @@ class SignUp extends Component {
   render() {
     if (this.state.isloading) {
       return (
-        <CircleLoading color = "#fff" />
+        <CircleLoading color="#fff" />
       )
     }
+    
     return (
       <form className="auth-innerMain">
+        <h3>Báo Cáo Tổng Hợp</h3>
+        <Tabs>
+          <TabList>
+            <Tab>Doanh Thu</Tab>
+            <Tab>Lượt Xe</Tab>
+          </TabList>
 
-        <h3 style={{ marginTop: 5 }}>Báo Cáo Tổng Hợp</h3>
+          <TabPanel>
+            <MDBTable bordered>
+              <MDBTableHead>
+                <tr>
+                  <th>Loại Vé</th>
+                  <th>Số Đầu Kỳ (VNĐ)</th>
+                  <th>Phát Sinh Trong Kỳ (VNĐ)</th>
+                  <th>Số Cuối Kỳ (VNĐ)</th>
+                </tr>
+              </MDBTableHead>
+              <MDBTableBody>
+                <tr>
+                  <th>Ô tô tháng</th>
+                  <td>{numeral(this.state.DauKy.OTT).format('0,0')}</td>
+                  <td>{numeral(this.state.GiuaKy.OTT).format('0,0')}</td>
+                  <td>{numeral(this.state.CuoiKy.OTT).format('0,0')}</td>
+                </tr>
+                <tr>
+                  <th>Ô tô lượt</th>
+                  <td>{numeral(this.state.DauKy.OTL).format('0,0')}</td>
+                  <td>{numeral(this.state.GiuaKy.OTL).format('0,0')}</td>
+                  <td>{numeral(this.state.CuoiKy.OTL).format('0,0')}</td>
+                </tr>
+                <tr>
+                  <th>Xe máy tháng</th>
+                  <td>{numeral(this.state.DauKy.XMT).format('0,0')}</td>
+                  <td>{numeral(this.state.GiuaKy.XMT).format('0,0')}</td>
+                  <td>{numeral(this.state.CuoiKy.XMT).format('0,0')}</td>
+                </tr>
 
-        <MDBTable bordered>
-          <MDBTableHead>
-            <tr>
-              <th>Loại Vé</th>
-              <th>Số Đầu Kỳ (VNĐ)</th>
-              <th>Phát Sinh Trong Kỳ (VNĐ)</th>
-              <th>Số Cuối Kỳ (VNĐ)</th>
-            </tr>
-          </MDBTableHead>
-          <MDBTableBody>
-            <tr>
-              <th>Ô tô tháng</th>
-              <td>{numeral(this.state.DauKy.OTT).format('0,0')}</td>
-              <td>{numeral(this.state.GiuaKy.OTT).format('0,0')}</td>
-              <td>{numeral(this.state.CuoiKy.OTT).format('0,0')}</td>
-            </tr>
-            <tr>
-              <th>Ô tô lượt</th>
-              <td>{numeral(this.state.DauKy.OTL).format('0,0')}</td>
-              <td>{numeral(this.state.GiuaKy.OTL).format('0,0')}</td>
-              <td>{numeral(this.state.CuoiKy.OTL).format('0,0')}</td>
-            </tr>
-            <tr>
-              <th>Xe máy tháng</th>
-              <td>{numeral(this.state.DauKy.XMT).format('0,0')}</td>
-              <td>{numeral(this.state.GiuaKy.XMT).format('0,0')}</td>
-              <td>{numeral(this.state.CuoiKy.XMT).format('0,0')}</td>
-            </tr>
+                <tr>
+                  <th>Xe máy lượt</th>
+                  <td>{numeral(this.state.DauKy.XML).format('0,0')}</td>
+                  <td>{numeral(this.state.GiuaKy.XML).format('0,0')}</td>
+                  <td>{numeral(this.state.CuoiKy.XML).format('0,0')}</td>
+                </tr>
 
-            <tr>
-              <th>Xe máy lượt</th>
-              <td>{numeral(this.state.DauKy.XML).format('0,0')}</td>
-              <td>{numeral(this.state.GiuaKy.XML).format('0,0')}</td>
-              <td>{numeral(this.state.CuoiKy.XML).format('0,0')}</td>
-            </tr>
+                <tr>
+                  <th style={{ color: 'red' }}>TỔNG</th>
+                  <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.DauKy.TONG).format('0,0')}</td>
+                  <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.GiuaKy.TONG).format('0,0')}</td>
+                  <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.CuoiKy.TONG).format('0,0')}</td>
+                </tr>
+              </MDBTableBody>
+            </MDBTable>
+          </TabPanel>
+          <TabPanel>
+            <MDBTable bordered>
+              <MDBTableHead>
+                <tr>
+                  <th>Loại Vé</th>
+                  <th>Xe Trong Bãi (Xe)</th>
+                  <th>Xe Đã Vào (Xe)</th>
+                  <th>Xe Đã Ra (Xe)</th>
+                  <th>Xe Mất Vé (Xe)</th>
+                </tr>
+              </MDBTableHead>
+              <MDBTableBody>
+                <tr>
+                  <th>Ô tô</th>
+                  <td>{numeral(this.state.TrongBai.OT).format('0,0')}</td>
+                  <td>{numeral(this.state.XeVao.OT).format('0,0')}</td>
+                  <td>{numeral(this.state.XeRa.OT).format('0,0')}</td>
+                  <td>{numeral(this.state.XeMV.OT).format('0,0')}</td>
+                </tr>
+                <tr>
+                  <th>Xe Máy</th>
+                  <td>{numeral(this.state.TrongBai.XM).format('0,0')}</td>
+                  <td>{numeral(this.state.XeVao.XM).format('0,0')}</td>
+                  <td>{numeral(this.state.XeRa.XM).format('0,0')}</td>
+                  <td>{numeral(this.state.XeMV.XM).format('0,0')}</td>
+                </tr>
+                <tr>
+                  <th>Xe Đạp</th>
+                  <td>{numeral(this.state.TrongBai.XD).format('0,0')}</td>
+                  <td>{numeral(this.state.XeVao.XD).format('0,0')}</td>
+                  <td>{numeral(this.state.XeRa.XD).format('0,0')}</td>
+                  <td>{numeral(this.state.XeMV.XD).format('0,0')}</td>
+                </tr>
 
-            <tr>
-              <th style={{ color: 'red' }}>TỔNG</th>
-              <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.DauKy.TONG).format('0,0')}</td>
-              <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.GiuaKy.TONG).format('0,0')}</td>
-              <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.CuoiKy.TONG).format('0,0')}</td>
-            </tr>
-          </MDBTableBody>
-        </MDBTable>
+                {/* <tr>
+                  <th>Xe máy lượt</th>
+                  <td>{numeral(this.state.DauKy.XML).format('0,0')}</td>
+                  <td>{numeral(this.state.GiuaKy.XML).format('0,0')}</td>
+                  <td>{numeral(this.state.CuoiKy.XML).format('0,0')}</td>
+                  <td>{numeral(this.state.CuoiKy.OTT).format('0,0')}</td>
+                </tr> */}
+
+                <tr>
+                  <th style={{ color: 'red' }}>TỔNG</th>
+                  <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.TrongBai.TONG).format('0,0')}</td>
+                  <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.XeVao.TONG).format('0,0')}</td>
+                  <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.XeRa.TONG).format('0,0')}</td>
+                  <td style={{ color: "red", fontWeight: "bold" }}>{numeral(this.state.XeMV.TONG).format('0,0')}</td>
+                </tr>
+              </MDBTableBody>
+            </MDBTable>
+          </TabPanel>
+        </Tabs>
+
+
+
         <div>
           <label style={{ color: 'red', marginRight: 21 }}>Thời gian từ: </label>
           <DateTimePicker
@@ -175,10 +299,10 @@ class Login extends Component {
 
   login = (e) => {
     e.preventDefault();
-    this.setState({isloading: true});
+    this.setState({ isloading: true });
     API.getUser({ data: this.state.username, password: this.state.password, Mode: "UserName" }, (data) => {
       if (data == true) {
-        this.setState({isloading: false});
+        this.setState({ isloading: false });
         fakeAuth.authenticate(() => {
           this.setState(() => ({
             redirectToReferrer: true
@@ -187,12 +311,12 @@ class Login extends Component {
         this.props.history.push('/sign-up')
       }
       else if (data == "error") {
-        this.setState({isloading: false});
+        this.setState({ isloading: false });
         this.setState({ thongbao: "Mất kết nối đến Sever" });
 
       }
       else {
-        this.setState({isloading: false});
+        this.setState({ isloading: false });
         this.setState({ thongbao: data });
       }
     })
@@ -202,7 +326,7 @@ class Login extends Component {
   render() {
     if (this.state.isloading) {
       return (
-        <CircleLoading color = "#fff" />
+        <CircleLoading color="#fff" />
       )
     }
     return (
@@ -217,7 +341,7 @@ class Login extends Component {
 
         <div className="form-group">
           <label>Tài Khoản</label>
-          <input type="user" className="form-control" placeholder="Tên Tài Khoản" value = {this.state.username} onChange={(data) => { this.setState({ username: data.target.value }) }} />
+          <input type="user" className="form-control" placeholder="Tên Tài Khoản" value={this.state.username} onChange={(data) => { this.setState({ username: data.target.value }) }} />
         </div>
 
         <div className="form-group">
@@ -228,7 +352,7 @@ class Login extends Component {
         <div className="" style={{ textAlign: "center", }}>
           <label style={{ color: 'red' }}>{this.state.thongbao}</label>
         </div>
-        <button onClick={(e) => {this.login(e)}} type="submit" className="btn btn-primary btn-block">Đăng Nhập</button>
+        <button onClick={(e) => { this.login(e) }} type="submit" className="btn btn-primary btn-block">Đăng Nhập</button>
       </form>
     );
   }
